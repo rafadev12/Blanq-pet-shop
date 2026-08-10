@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # <-- Agregar aquí
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -118,21 +119,20 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
-
 import os
 from pathlib import Path
 
-# ... configuraciones previas ...
+# (BASE_DIR ya debe estar definido al inicio del archivo)
 
 STATIC_URL = 'static/'
 
-# Carpeta static a nivel raíz del proyecto (al lado de manage.py)
+# Carpeta donde Django copiará todos los estáticos para producción (REQUERIDO)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Carpeta donde tienes tus estáticos locales (CSS, JS, imágenes)
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -140,5 +140,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    },
+}
+
+# Almacenamiento optimizado para estáticos con WhiteNoise
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
