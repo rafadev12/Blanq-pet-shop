@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-2rb5n43pb17iduwylelz%6&1q9rh!d4n2e&!++iy(drqfz9_a$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['blanq-pet-shop.onrender.com', 'localhost', '127.0.0.1']
+# O de forma general mientras pruebas:
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -149,6 +151,6 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # <-- Sin 'Manifest'
     },
 }
