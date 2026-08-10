@@ -1,0 +1,766 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLANQ | Higiene de Primera para Mascotas</title>
+
+    <!-- Google Fonts: Poppins (Rounded/Amigable) para títulos, Inter para texto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blanq-blue': {
+                            100: '#e0f2fe', // Azul muy claro
+                            500: '#0ea5e9', // Azul medio
+                            600: '#0284c7', // Azul principal (Inspirado en posts)
+                            700: '#0369a1', // Azul oscuro para hover
+                        },
+                        'blanq-green': {
+                            400: '#4ade80', // Verde vibrante (Acento empaque Voisen)
+                            500: '#22c55e', 
+                            600: '#16a34a',
+                        },
+                        'blanq-base': '#f1f5f9', // Gris azulado pálido
+                        'blanq-text': '#1e293b', // Texto oscuro principal
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'title': ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Tipografía redondeada similar a "HIGIENE AL INSTANTE" */
+        h1, h2, h3, .brand-title {
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.04em;
+        }
+        
+        /* Efecto de burbujas flotantes de fondo */
+        .bubble-bg {
+            background-color: theme('colors.blanq-blue.600');
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 30%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 20%);
+        }
+
+        /* Añadimos un pequeño borde para el efecto 'rounded' en las fuentes gruesas */
+        .rounded-title {
+            -webkit-text-stroke: 1px transparent;
+            paint-order: stroke fill;
+        }
+    </style>
+
+    <!-- En el <head> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+</head>
+<body class="bg-blanq-base text-blanq-text font-sans antialiased">
+{% verbatim %}
+<svg class="absolute top-10 left-10 w-24 h-24 text-blanq-blue-500" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2Zm0,18c-4.41,0-8-3.59-8-8s3.59-8,8-8,8,3.59,8,8-3.59,8-8,8ZM11,7h2v6h-2V7Zm0,8h2v2h-2v-2Z"/>
+</svg>
+
+<svg class="absolute bottom-20 right-20 w-32 h-32 text-blanq-green-400" viewBox="0 0 24 24" fill="currentColor">
+  <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"/>
+</svg>
+{% endverbatim %}
+
+<!-- Top Banner de Incentivo -->
+<div class="bg-gradient-to-r from-blanq-green-500 via-emerald-600 to-blanq-blue-500 text-white text-xs md:text-sm py-2 px-4 text-center font-medium shadow-sm flex items-center justify-center gap-2">
+    <span>✨ <strong>¡Envío GRATIS!</strong> en tu primer combo o compras mayores a $25 🚚🇻🇪</span>
+    <button onclick="openPromoModal()" class="underline hover:text-emerald-100 font-bold ml-1 hidden sm:inline">
+        Reclamar 10% OFF
+    </button>
+</div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-md border-b border-blanq-blue-100">
+        <div class="max-w-6x1 mx-auto px-5 py-1 flex justify-center items-center bg-blanq-blue-700 border-b border-blanq-blue-200">
+            <span class="text-sm text-center text-blanq-blue-100">Envíos a todo el país 🇻🇪</span>
+        </div>
+
+        <!-- Badge Tasa BCV -->
+        <div class="inline-flex items-center gap-2 bg-blanq-blue-100/60 text-blanq-text text-xs font-medium px-3 py-1.5 rounded-full border border-blanq-blue-200">
+            <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>BCV: <strong id="bcv-rate-text">Cargando...</strong></span>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-5 py-4 flex justify-between items-center">
+            <a href="#" class="brand-title text-3xl font-extrabold tracking-tighter text-blanq-blue-600">BLANQ<span class="text-blanq-green-500">.</span></a>
+            <a href="https://wa.me/584248183874" target="_blank" class="bg-blanq-green-500 hover:bg-blanq-green-600 text-white font-bold px-6 py-2.5 rounded-full flex items-center gap-2.5 shadow-md hover:shadow-lg transition duration-150 text-sm">
+                <span>💬 Pedir por WhatsApp</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section (Inspirado en image_0.png) -->
+    <section class="bubble-bg text-white relative overflow-hidden">
+        <div class="max-w-6xl mx-auto px-5 py-24 flex flex-col md:flex-row items-center gap-12 z-10 relative">
+            <div class="flex-1 space-y-6 text-center md:text-left">
+                <span class="inline-block bg-white/20 text-blanq-blue-100 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider">Cuidado Sin Estrés</span>
+                <h1 class="text-5xl md:text-6xl bg-gradient-to-r from-blanq-blue-600 to-blanq-green-500 bg-clip-text text-transparent font-extrabold leading-tight tracking-tighter rounded-title">
+                    Higiene de primera <br><span class="text-blanq-green-400">en segundos.</span>
+                </h1>
+                <p class="text-xl text-blanq-blue-100 max-w-xl mx-auto md:mx-0">
+                    Toallitas húmedas tipo guante para perros y gatos. Olvídate del agua y el estrés del baño.
+                </p>
+                <a href="#promos" class="inline-block bg-blanq-green-500 hover:bg-blanq-green-600 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-blanq-green-500/30 transition duration-150">
+                    Ver Promociones
+                </a>
+            </div>
+            <div class="flex-1 w-full max-w-lg relative">
+                <!-- Imagen inspirada en image_0.png (Perrito feliz) -->
+                <div class="aspect-square bg-white rounded-full p-6 flex items-center justify-center shadow-inner relative z-10 overflow-hidden border-8 border-blanq-blue-100/30">
+                    <img src="{% static 'img/dog3.jpg' %}" alt="Perrito blanco feliz corriendo" class="w-full h-full object-cover rounded-full">
+                </div>
+                <!-- Gráficos de burbujas flotantes adicionales -->
+                <div class="absolute -top-10 -right-10 w-24 h-24 bg-white/10 rounded-full blur-xl z-0"></div>
+                <div class="absolute -bottom-8 -left-8 w-20 h-20 bg-blanq-green-400/20 rounded-full blur-lg z-0"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Banner Slider Section -->
+<section class="max-w-6xl mx-auto px-5 py-6">
+    <div class="swiper mainBannerSwiper rounded-2xl overflow-hidden shadow-lg border border-blanq-blue-100/50">
+        <div class="swiper-wrapper">
+            
+            <!-- Slide 1 -->
+            <div class="swiper-slide relative">
+                <img src="{% static 'img/dogs.jpg' %}" alt="Promoción BLANQ 1" class="w-full h-[250px] md:h-[400px] object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
+                    <p class="text-white text-lg md:text-2xl font-bold">¡Higiene sin estrés para tu mascota! 🐾</p>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="swiper-slide relative">
+                <img src="{% static 'img/gogs2.jpg' %}" alt="Promoción BLANQ 2" class="w-full h-[250px] md:h-[400px] object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
+                    <p class="text-white text-lg md:text-2xl font-bold">Envío gratis en combos seleccionados 🚚</p>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="swiper-slide relative">
+                <img src="{% static 'img/dogs3.jpg' %}" alt="Promoción BLANQ 3" class="w-full h-[250px] md:h-[400px] object-cover">
+            </div>
+
+        </div>
+
+        <!-- Paginación (Puntos abajo) y Flechas -->
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next text-blanq-green-500 !w-8 !h-8 after:!text-lg font-bold"></div>
+        <div class="swiper-button-prev text-blanq-green-500 !w-8 !h-8 after:!text-lg font-bold"></div>
+    </div>
+</section>
+
+    <!-- Módulo de Productos / Combos (Diseño limpio, acentos verdes) -->
+    <section id="promos" class="bg-white py-20 border-y border-blanq-blue-100">
+        <div class="max-w-6xl mx-auto px-5">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-blanq-blue-700 tracking-tighter">Promociones Imperdibles</h2>
+                <p class="text-blanq-text/70 mt-3 text-lg">Paga de forma segura al cambio del BCV</p>
+                <div class="w-24 h-1.5 bg-blanq-green-500 mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-10">
+                {% for combo in combos %}
+                <div class="relative bg-blanq-base border border-blanq-blue-100 rounded-3xl p-8 flex flex-col justify-between hover:border-blanq-blue-500 hover:shadow-2xl hover:-translate-y-1 transition duration-200">
+                    {% if combo.badge %}
+                        <span class="absolute -top-4 right-8 bg-blanq-green-500 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">
+                            {{ combo.badge }}
+                        </span>
+                    {% endif %}
+                    <div>
+                        <!-- Título del combo (Ej: 2 Guantes/Packs) -->
+                        <h3 class="text-2xl font-bold text-blanq-blue-700 tracking-tight">{{ combo.title }}</h3>
+                        <p class="text-blanq-text/70 mt-1.5">{{ combo.subtitle }}</p>
+                        <div class="my-10 flex items-end gap-1.5">
+                            <span class="text-5xl font-black text-blanq-blue-600 tracking-tighter rounded-title">${{ combo.price_usd|floatformat:0 }}</span>
+                            <span class="text-base font-medium text-blanq-text/50 pb-1"> (BCV)</span>
+                        </div>
+                    </div>
+{% static "img/dog2.jpg" as img_url %}
+<button type="button"
+        onclick="addToCart('{{ combo.title|escapejs }}', {{ combo.price_usd }}, '{{ img_url }}')"
+        class="w-full text-center bg-blanq-green-500 hover:bg-blanq-green-600 text-white font-bold py-4 rounded-xl shadow hover:shadow-lg transition duration-150">
+    Ordenar Combo
+</button>
+                </div>
+                {% empty %}
+                <div class="col-span-3 text-center py-10 bg-blanq-base/50 rounded-2xl border-2 border-dashed border-blanq-blue-100 text-blanq-text/50">
+                    Las mejores promociones para tu mascota se están preparando...
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Reseñas / Prueba Social -->
+<section class="py-16 bg-gradient-to-b from-white to-blanq-blue-100/30">
+    <div class="max-w-6xl mx-auto px-5">
+        
+        <!-- Encabezado de Sección -->
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="bg-blanq-green-100 text-blanq-green-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                Clientes Felices 🐾
+            </span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 mt-3">
+                Lo que dicen sobre BLANQ
+            </h2>
+            <p class="text-gray-600 mt-2 text-sm md:text-base">
+                Más de 500 peludos limpios y felices sin el estrés del baño con agua.
+            </p>
+        </div>
+
+        <!-- Grid de Testimonios -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Tarjeta 1 -->
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col justify-between hover:shadow-lg transition-shadow">
+                <div>
+                    <!-- Estrellas -->
+                    <div class="flex text-amber-400 mb-3 text-sm">
+                        ★★★★★
+                    </div>
+                    <p class="text-gray-700 text-sm leading-relaxed italic">
+                        "Mi perrita odia el agua con toda su alma. Las toallitas guante de BLANQ me salvaron la vida para limpiarle las patas después de los paseos. ¡Súper recomendadas!"
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
+                    <img src="{% static 'img/dog.jpg' %}" alt="Luna" class="w-11 h-11 rounded-full object-cover border-2 border-blanq-green-400">
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-800">Camila R.</h4>
+                        <p class="text-xs text-gray-500">Mamá de Luna 🐶 (Golden Retriever)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2 -->
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col justify-between hover:shadow-lg transition-shadow">
+                <div>
+                    <div class="flex text-amber-400 mb-3 text-sm">
+                        ★★★★★
+                    </div>
+                    <p class="text-gray-700 text-sm leading-relaxed italic">
+                        "Lo pedí por la web y la atención por WhatsApp fue súper rápida. Pagué por Pago Móvil al cambio BCV y me llegó al día siguiente. Muy buen producto."
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
+                    <img src="{% static 'img/dog3.jpg' %}" alt="Max" class="w-11 h-11 rounded-full object-cover border-2 border-blanq-green-400">
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-800">Carlos M.</h4>
+                        <p class="text-xs text-gray-500">Papá de Max 🐕 (French Poodle)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3 -->
+            <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col justify-between hover:shadow-lg transition-shadow">
+                <div>
+                    <div class="flex text-amber-400 mb-3 text-sm">
+                        ★★★★★
+                    </div>
+                    <p class="text-gray-700 text-sm leading-relaxed italic">
+                        "Tengo 2 gatos y bañarlos era una batalla campal. Con los guantes húmedos quedan limpios, huelen divino y ni se enteran de que los estoy aseando."
+                    </p>
+                </div>
+                <div class="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
+                    <img src="{% static 'img/dog2.jpg' %}" alt="Michi" class="w-11 h-11 rounded-full object-cover border-2 border-blanq-green-400">
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-800">Andrea V.</h4>
+                        <p class="text-xs text-gray-500">Mamá de Simba y Mia 🐱</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+    <!-- Sección Beneficios (Iconos limpios, enfoque image_1.png) -->
+    <section class="max-w-6xl mx-auto px-5 py-24">
+        <h2 class="text-3xl font-bold text-center text-blanq-blue-700 tracking-tighter mb-14">¿Qué hace a BLANQ especial?</h2>
+        <div class="grid sm:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-3xl border border-blanq-blue-100 shadow-lg text-center flex flex-col items-center gap-5 hover:border-blanq-green-400 transition">
+                <div class="text-5xl p-4 bg-blanq-blue-100/50 rounded-full text-blanq-blue-600">🐾</div>
+                <h3 class="text-xl font-bold text-blanq-blue-700">Higiene Limpia al Instante</h3>
+                <p class="text-blanq-text/80 text-sm leading-relaxed">No necesitas agua ni jabón extra. ¡Perfecto para mascotas inquietas!</p>
+            </div>
+            <div class="bg-white p-8 rounded-3xl border border-blanq-blue-100 shadow-lg text-center flex flex-col items-center gap-5 hover:border-blanq-green-400 transition">
+                <div class="text-5xl p-4 bg-blanq-blue-100/50 rounded-full text-blanq-blue-600">🚗</div>
+                <h3 class="text-xl font-bold text-blanq-blue-700">Listo para cualquier paseo</h3>
+                <p class="text-blanq-text/80 text-sm leading-relaxed">Formato compacto ideal para llevar en el carro o en el bolso a todas partes.</p>
+            </div>
+            <div class="bg-white p-8 rounded-3xl border border-blanq-blue-100 shadow-lg text-center flex flex-col items-center gap-5 hover:border-blanq-green-400 transition">
+                <div class="text-5xl p-4 bg-blanq-blue-100/50 rounded-full text-blanq-blue-600">🌿</div>
+                <h3 class="text-xl font-bold text-blanq-blue-700">Fórmula Suave y Segura</h3>
+                <p class="text-blanq-text/80 text-sm leading-relaxed">Enriquecido con aloe vera para cuidar la piel y pelaje de perros y gatos.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección FAQ -->
+<section class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-5">
+        
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-extrabold text-gray-800">
+                Preguntas Frecuentes 💡
+            </h2>
+            <p class="text-gray-600 text-sm mt-2">
+                Resuelve tus dudas sobre el uso de los productos BLANQ y los envíos.
+            </p>
+        </div>
+
+        <div class="space-y-4" id="faq-accordion">
+            
+            <!-- Pregunta 1 -->
+            <div class="border border-gray-200 rounded-xl overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 text-left font-bold text-gray-800 transition-colors">
+                    <span>¿Las toallitas tipo guante sirven tanto para perros como para gatos?</span>
+                    <span class="faq-icon text-xl font-bold text-blanq-green-500 transition-transform">+</span>
+                </button>
+                <div class="faq-answer hidden p-5 border-t border-gray-100 text-sm text-gray-600 bg-white leading-relaxed">
+                    ¡Sí! Nuestra fórmula tiene pH neutro e ingredientes hipoalergénicos diseñados para no irritar la piel ni el pelaje sensible de perros y gatos de todas las razas.
+                </div>
+            </div>
+
+            <!-- Pregunta 2 -->
+            <div class="border border-gray-200 rounded-xl overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 text-left font-bold text-gray-800 transition-colors">
+                    <span>¿Puedo usar las toallitas en cachorros recién nacidos?</span>
+                    <span class="faq-icon text-xl font-bold text-blanq-green-500 transition-transform">+</span>
+                </button>
+                <div class="faq-answer hidden p-5 border-t border-gray-100 text-sm text-gray-600 bg-white leading-relaxed">
+                    Recomendamos su uso a partir de las 6 semanas de vida. Al no requerir agua ni enjuague, son ideales para mantener limpios a los cachorros antes de que completen su esquema de vacunación.
+                </div>
+            </div>
+
+            <!-- Pregunta 3 -->
+            <div class="border border-gray-200 rounded-xl overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 text-left font-bold text-gray-800 transition-colors">
+                    <span>¿Cómo realizan las entregas y envíos en Venezuela?</span>
+                    <span class="faq-icon text-xl font-bold text-blanq-green-500 transition-transform">+</span>
+                </button>
+                <div class="faq-answer hidden p-5 border-t border-gray-100 text-sm text-gray-600 bg-white leading-relaxed">
+                    Hacemos entregas personales y servicio delivery en zona urbana, y envíos nacionales a todo el país a través de Zoom, MRW y Tealca 🇻🇪.
+                </div>
+            </div>
+
+            <!-- Pregunta 4 -->
+            <div class="border border-gray-200 rounded-xl overflow-hidden transition-all">
+                <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 bg-gray-50 hover:bg-gray-100 text-left font-bold text-gray-800 transition-colors">
+                    <span>¿Cuáles son los métodos de pago aceptados?</span>
+                    <span class="faq-icon text-xl font-bold text-blanq-green-500 transition-transform">+</span>
+                </button>
+                <div class="faq-answer hidden p-5 border-t border-gray-100 text-sm text-gray-600 bg-white leading-relaxed">
+                    Aceptamos Pago Móvil (a la tasa oficial del BCV del día), Zinli, Binance (USDT) y efectivo en entregas personales.
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+    <!-- Footer (Inspirado en footer image_1.png) -->
+    <footer class="bg-blanq-blue-600 text-blanq-blue-100 py-12 border-t border-blanq-blue-700">
+        <div class="max-w-6xl mx-auto px-5 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left text-sm">
+            <p>&copy; 2026 BLANQ. Todos los derechos reservados.</p>
+            <div class="flex items-center gap-6">
+                <a href="https://instagram.com" target="_blank" class="hover:text-white transition flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm-.2 2.6c-1.8 0-3.2 1.4-3.2 3.2v8.4c0 1.8 1.4 3.2 3.2 3.2h8.4c1.8 0 3.2-1.4 3.2-3.2V7.8c0-1.8-1.4-3.2-3.2-3.2H7.6Zm9 2.4a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm-4.4 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 1.4a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2Z"/></svg>
+                    <span>Instagram</span>
+                </a>
+                <a href="mailto:somosblanq.pet@gmail.com" class="hover:text-white transition">somosblanq.pet@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swiper = new Swiper('.mainBannerSwiper', {
+            loop: true,
+            autoplay: {
+                delay: 4000, // Cambia cada 4 segundos
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    });
+</script>
+
+
+<!-- Botón Flotante del Carrito (Esquina inferior derecha) -->
+<button id="cart-btn" onclick="toggleCart()" class="fixed bottom-6 right-6 bg-blanq-green-500 hover:bg-blanq-green-600 text-white p-4 rounded-full shadow-2xl z-50 flex items-center justify-center transition-all transform hover:scale-110">
+    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"></path>
+    </svg>
+    <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center border-2 border-white">0</span>
+</button>
+
+<!-- Panel Lateral del Carrito (Drawer Overlay) -->
+<div id="cart-drawer" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-sm transition-opacity">
+    <div class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col justify-between p-6">
+        
+        <!-- Header del Carrito -->
+        <div>
+            <div class="flex justify-between items-center border-b pb-4">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    🛒 Tu Carrito BLANQ
+                </h3>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            </div>
+
+            <!-- Lista de Productos Agregados -->
+            <div id="cart-items" class="mt-4 space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                <!-- Se llena dinámicamente con JS -->
+            </div>
+        </div>
+
+       <!-- En el footer de tu cart-drawer -->
+<div class="border-t pt-4 space-y-2">
+    <div class="flex justify-between text-base font-semibold text-gray-700">
+        <span>Total (USD):</span>
+        <span id="cart-total" class="text-gray-900">$0.00</span>
+    </div>
+    <!-- Total en Bolívares -->
+    <div class="flex justify-between text-lg font-extrabold text-blanq-green-600 bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
+        <span>Total aprox. (BS):</span>
+        <span id="cart-total-bs">Bs. 0.00</span>
+    </div>
+...
+
+            <!-- Formulario de Datos Básicos -->
+            <div class="space-y-2">
+                <input type="text" id="customer-name" placeholder="Tu Nombre completo" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blanq-green-500">
+                <select id="payment-method" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blanq-green-500 text-gray-600">
+                    <option value="">Selecciona Método de Pago</option>
+                    <option value="Pago Móvil">Pago Móvil (BS)</option>
+                    <option value="Zinli">Zinli</option>
+                    <option value="Binance / USDT">Binance / USDT</option>
+                    <option value="Efectivo / Divisas">Efectivo / Divisas</option>
+                </select>
+            </div>
+
+            <button onclick="sendWhatsAppOrder()" class="w-full bg-blanq-green-500 hover:bg-blanq-green-600 text-white font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                <span>Completar Pedido por WhatsApp</span>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Promocional / Lead Magnet -->
+<div id="promo-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 transition-opacity">
+    <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl relative transform transition-all border border-emerald-100">
+        
+        <!-- Botón para cerrar -->
+        <button onclick="closePromoModal()" class="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full w-8 h-8 flex items-center justify-center font-bold z-10">&times;</button>
+
+        <!-- Cabecera Visual con Imagen/Gradiente -->
+        <div class="bg-gradient-to-br from-blanq-green-400 to-blanq-blue-500 p-8 text-center text-white relative">
+            <span class="text-4xl">🎁</span>
+            <h3 class="text-2xl font-black mt-2">¡Obtén 10% OFF!</h3>
+            <p class="text-xs text-emerald-50 mt-1 font-medium">En tu primera compra de toallitas o combos BLANQ</p>
+        </div>
+
+        <!-- Cuerpo del Modal -->
+        <div class="p-6 space-y-4">
+            <p class="text-xs text-gray-600 text-center">
+                Déjanos tu nombre y número de WhatsApp para enviarte tu cupón exclusivo inmediatamente:
+            </p>
+
+            <form onsubmit="handleLeadSubmit(event)" class="space-y-3">
+                <div>
+                    <input type="text" id="lead-name" required placeholder="Tu Nombre o el de tu mascota 🐾" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blanq-green-500">
+                </div>
+                <div>
+                    <input type="tel" id="lead-phone" required placeholder="Número de WhatsApp (ej: 0424...)" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blanq-green-500">
+                </div>
+                <button type="submit" class="w-full bg-blanq-green-500 hover:bg-blanq-green-600 text-white font-bold py-3 rounded-xl shadow-lg transition-all text-sm">
+                    Reclamar mi 10% de Descuento 🚀
+                </button>
+            </form>
+
+            <p class="text-[10px] text-gray-400 text-center">
+                *Sin spam. Solo promociones exclusivas para tu peludito.
+            </p>
+        </div>
+    </div>
+</div>
+<!-- Swiper JS (Librería externa) -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Script Principal Unificado de BLANQ -->
+<script>
+    /* ==========================================================================
+       1. VARIABLES GLOBALES E INICIALIZACIÓN
+       ========================================================================== */
+    const WHATSAPP_PHONE = "584248183874"; 
+    let cart = JSON.parse(localStorage.getItem('blanq_cart')) || [];
+    let bcvRate = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Inicializar Tasa BCV y Carrito
+        fetchBcvRate();
+        updateCartUI();
+
+        // Modal Promocional a los 7 segundos
+        const hasSeenPromo = localStorage.getItem('blanq_promo_seen');
+        if (!hasSeenPromo) {
+            setTimeout(() => {
+                openPromoModal();
+            }, 7000);
+        }
+    });
+
+
+    /* ==========================================================================
+       2. GESTIÓN DEL CARRITO Y LOCALSTORAGE
+       ========================================================================== */
+    function saveCartToStorage() {
+        localStorage.setItem('blanq_cart', JSON.stringify(cart));
+    }
+
+    function toggleCart() {
+        const drawer = document.getElementById('cart-drawer');
+        if (drawer) {
+            drawer.classList.toggle('hidden');
+        }
+    }
+
+    function addToCart(name, price, image) {
+        const numericPrice = parseFloat(price) || 0;
+        const existingItem = cart.find(item => item.name === name);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ 
+                name: name, 
+                price: numericPrice, 
+                image: image, 
+                quantity: 1 
+            });
+        }
+
+        saveCartToStorage();
+        updateCartUI();
+        toggleCart(); // Abre el carrito al agregar
+    }
+
+    function updateQuantity(index, delta) {
+        cart[index].quantity += delta;
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+        saveCartToStorage();
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const cartTotal = document.getElementById('cart-total');
+        const cartTotalBs = document.getElementById('cart-total-bs');
+
+        if (!cartItemsContainer) return;
+
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+        let totalItems = 0;
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = `<p class="text-gray-400 text-center py-8">Tu carrito está vacío 🐶</p>`;
+        } else {
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.quantity;
+                total += subtotal;
+                totalItems += item.quantity;
+
+                const itemBs = bcvRate > 0 ? (item.price * bcvRate).toFixed(2) : '0.00';
+
+                cartItemsContainer.innerHTML += `
+                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border">
+                        <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-md">
+                        <div class="flex-1 ml-3">
+                            <h4 class="text-sm font-semibold text-gray-800">${item.name}</h4>
+                            <p class="text-xs text-gray-500">$${item.price.toFixed(2)} c/u <span class="text-emerald-600 font-medium">(Bs. ${itemBs})</span></p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateQuantity(${index}, -1)" class="w-6 h-6 bg-gray-200 text-gray-700 font-bold rounded hover:bg-gray-300">-</button>
+                            <span class="text-sm font-bold">${item.quantity}</span>
+                            <button onclick="updateQuantity(${index}, 1)" class="w-6 h-6 bg-gray-200 text-gray-700 font-bold rounded hover:bg-gray-300">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        const totalBsAmount = bcvRate > 0 ? (total * bcvRate).toFixed(2) : '0.00';
+
+        if (cartCount) cartCount.innerText = totalItems;
+        if (cartTotal) cartTotal.innerText = `$${total.toFixed(2)}`;
+        if (cartTotalBs) cartTotalBs.innerText = `Bs. ${totalBsAmount}`;
+    }
+
+    function sendWhatsAppOrder() {
+        if (cart.length === 0) {
+            alert('Añade al menos un producto al carrito antes de hacer tu pedido.');
+            return;
+        }
+
+        const name = document.getElementById('customer-name')?.value.trim();
+        const payment = document.getElementById('payment-method')?.value;
+
+        if (!name || !payment) {
+            alert('Por favor ingresa tu nombre y selecciona un método de pago.');
+            return;
+        }
+
+        let message = `¡Hola BLANQ! 🐾 Quiero realizar el siguiente pedido:\n\n`;
+        let total = 0;
+
+        cart.forEach(item => {
+            const subtotal = item.price * item.quantity;
+            total += subtotal;
+            message += `▪ *${item.quantity}x ${item.name}* - $${subtotal.toFixed(2)}\n`;
+        });
+
+        const totalBs = bcvRate > 0 ? (total * bcvRate).toFixed(2) : '0.00';
+
+        message += `\n💵 *Total USD:* $${total.toFixed(2)}`;
+        if (bcvRate > 0) {
+            message += `\n🇻🇪 *Total estimado (BCV ${bcvRate.toFixed(2)}):* Bs. ${totalBs}`;
+        }
+        message += `\n👤 *Cliente:* ${name}`;
+        message += `\n💳 *Método de Pago:* ${payment}`;
+        message += `\n\nQuedo a la espera de la información para concretar el pago.`;
+
+        const encodedMessage = encodeURIComponent(message);
+        window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodedMessage}`, '_blank');
+    }
+
+
+    /* ==========================================================================
+       3. TASA BCV DESDE API
+       ========================================================================== */
+    async function fetchBcvRate() {
+        const rateTextElement = document.getElementById('bcv-rate-text');
+        try {
+            const response = await fetch('https://ve.dolarapi.com/v1/dolares/oficial');
+            const data = await response.json();
+            
+            if (data && data.promedio) {
+                bcvRate = data.promedio;
+                if (rateTextElement) rateTextElement.innerText = `Bs. ${bcvRate.toFixed(2)}`;
+            } else {
+                throw new Error('Respuesta no válida');
+            }
+        } catch (error) {
+            console.warn('Error obteniendo tasa BCV:', error);
+            bcvRate = 40.00; 
+            if (rateTextElement) rateTextElement.innerText = `Bs. ${bcvRate.toFixed(2)} (Ref)`;
+        } finally {
+            updateCartUI();
+        }
+    }
+
+
+    /* ==========================================================================
+       4. MODAL PROMOCIONAL / LEAD CAPTURE
+       ========================================================================== */
+    function openPromoModal() {
+        const modal = document.getElementById('promo-modal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closePromoModal() {
+        const modal = document.getElementById('promo-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function handleLeadSubmit(event) {
+        event.preventDefault();
+        
+        const nameInput = document.getElementById('lead-name');
+        const phoneInput = document.getElementById('lead-phone');
+
+        if (!nameInput || !phoneInput) return;
+
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+
+        if (!name || !phone) return;
+
+        localStorage.setItem('blanq_promo_seen', 'true');
+        closePromoModal();
+
+        const message = `¡Hola BLANQ! 🐾 Mi nombre es *${name}* (Telf: ${phone}) y quiero reclamar mi cupón del *10% OFF* en mi primera compra.`;
+        const encoded = encodeURIComponent(message);
+        
+        window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encoded}`, '_blank');
+    }
+
+
+    /* ==========================================================================
+       5. ACORDEÓN PREGUNTAS FRECUENTES (FAQ)
+       ========================================================================== */
+    function toggleFaq(button) {
+        const answer = button.nextElementSibling;
+        const icon = button.querySelector('.faq-icon');
+
+        document.querySelectorAll('.faq-answer').forEach(item => {
+            if (item !== answer) {
+                item.classList.add('hidden');
+                if (item.previousElementSibling) {
+                    const prevIcon = item.previousElementSibling.querySelector('.faq-icon');
+                    if (prevIcon) {
+                        prevIcon.innerText = '+';
+                        prevIcon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+        });
+
+        answer.classList.toggle('hidden');
+        if (answer.classList.contains('hidden')) {
+            if (icon) {
+                icon.innerText = '+';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        } else {
+            if (icon) {
+                icon.innerText = '−';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+    }
+</script>
+</body>
+</html>
