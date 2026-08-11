@@ -115,7 +115,7 @@
                 <h1 class="text-5xl md:text-6xl bg-gradient-to-r from-blanq-blue-600 to-blanq-green-500 bg-clip-text text-transparent font-extrabold leading-tight tracking-tighter rounded-title">
                     Higiene de primera <br><span class="text-blanq-green-400">en segundos.</span>
                 </h1>
-                <p class="text-xl text-blanq-blue-100 max-w-xl mx-auto md:mx-0">
+                <p class="text-xl text-blanq-blue-700 max-w-xl mx-auto md:mx-0">
                     Toallitas húmedas tipo guante para perros y gatos. Olvídate del agua y el estrés del baño.
                 </p>
                 <a href="#promos" class="inline-block bg-blanq-green-500 hover:bg-blanq-green-600 text-white text-lg font-bold px-10 py-4 rounded-full shadow-lg hover:shadow-blanq-green-500/30 transition duration-150">
@@ -513,6 +513,102 @@
         </div>
     </div>
 </div>
+
+<!-- Toast Notification Panel -->
+<div id="social-proof-toast" 
+     class="fixed bottom-5 left-5 z-50 flex items-center gap-4 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-100 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out pointer-events-none max-w-sm">
+    
+    <!-- Icono / Imagen del producto -->
+    <div class="relative flex-shrink-0">
+        <div id="toast-avatar" class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg overflow-hidden">
+            <!-- Se llena dinámicamente con JS -->
+        </div>
+        <span class="absolute -bottom-1 -right-1 flex h-4 w-4">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white"></span>
+        </span>
+    </div>
+
+    <!-- Contenido del texto -->
+    <div class="flex-1 pr-2">
+        <p class="text-xs text-gray-400 font-medium flex items-center gap-1">
+            <span id="toast-time">Hace 2 min</span>
+            <span>•</span>
+            <span class="text-emerald-600 font-semibold">Verificado</span>
+        </p>
+        <p id="toast-message" class="text-sm text-gray-800 font-medium leading-snug mt-0.5">
+            <!-- Mensaje dinámico -->
+        </p>
+    </div>
+
+    <!-- Botón para cerrar manualmente -->
+    <button onclick="hideToast()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+    </button>
+</div>
+
+<script>
+    // Banco de datos simulado (puedes adaptarlo con tus productos reales)
+const sampleNotifications = [
+    { type: 'buy', name: 'María G.', action: 'compró', product: 'Pets Gloves Wipes', time: 'hace 3 min', initial: 'M', bg: 'bg-orange-100 text-orange-600' },
+    { type: 'cart', name: 'Carlos R.', action: 'agregó al carrito', product: 'Pets Gloves Wipes', time: 'hace 1 min', initial: 'C', bg: 'bg-blue-100 text-blue-600' },
+    { type: 'buy', name: 'Andrea V.', action: 'compró', product: 'Pets Gloves Wipes', time: 'hace 5 min', initial: 'A', bg: 'bg-emerald-100 text-emerald-600' },
+    { type: 'cart', name: 'Sofa P.', action: 'agregó al carrito', product: 'Pets Gloves Wipes', time: 'hace 2 min', initial: 'S', bg: 'bg-purple-100 text-purple-600' },
+];
+
+let toastTimeout;
+
+function showRandomNotification() {
+    const toast = document.getElementById('social-proof-toast');
+    const avatar = document.getElementById('toast-avatar');
+    const time = document.getElementById('toast-time');
+    const message = document.getElementById('toast-message');
+
+    // Seleccionar una notificación aleatoria
+    const data = sampleNotifications[Math.floor(Math.random() * sampleNotifications.length)];
+
+    // Actualizar contenido
+    avatar.className = `w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg overflow-hidden ${data.bg}`;
+    avatar.innerText = data.initial;
+    time.innerText = data.time;
+    
+    message.innerHTML = `<span class="font-bold text-gray-900">${data.name}</span> ${data.action} <span class="font-semibold text-orange-500">${data.product}</span>`;
+
+    // Animación de entrada con Tailwind (deslizar hacia arriba y opacidad)
+    toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+    toast.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+
+    // Ocultar automáticamente después de 5 segundos
+    toastTimeout = setTimeout(() => {
+        hideToast();
+    }, 5000);
+}
+
+function hideToast() {
+    const toast = document.getElementById('social-proof-toast');
+    toast.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+    toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+}
+
+// Ciclo de animación: Aparece cada 8 - 15 segundos aleatoriamente
+function startSocialProofLoop() {
+    // Primera notificación tras 4 segundos de cargar la página
+    setTimeout(() => {
+        showRandomNotification();
+        
+        // Intervalos periódicos
+        setInterval(() => {
+            showRandomNotification();
+        }, Math.floor(Math.random() * (15000 - 9000 + 1)) + 9000);
+
+    }, 4000);
+}
+
+// Iniciar al cargar el DOM
+document.addEventListener('DOMContentLoaded', startSocialProofLoop);
+</script>
 <!-- Swiper JS (Librería externa) -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
